@@ -8,7 +8,7 @@ class Pollo {
 
         this.img = new Image();
         this.img.src = "./images/flappy.png"
-        this.speed=1;
+        this.speed=100;
         this.jumpSpeed=30
     }
 
@@ -18,10 +18,14 @@ class Pollo {
 
 
     //metodo para hacer que el pollo se mueva hacia abajo
-    gravityPollo = () => {
+    gravityPollo = (secondsPassed) => {
         //console.log("pollito bajando");
-        if((this.y+this.speed)<canvas.height-this.h) this.y=this.y+ this.speed
-        else this.y=canvas.height-this.h
+        if((this.y+ this.speed*secondsPassed )<canvas.height-this.h) {
+            this.y=this.y+ this.speed*secondsPassed
+        }
+        else {
+            this.y=canvas.height-this.h
+        }
     }
 
     jumpPollo = () => {

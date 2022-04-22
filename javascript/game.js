@@ -1,4 +1,13 @@
 console.log("desde el js Game")
+let secondsPassed;
+let oldTimeStamp = +new Date() - (60*5);
+let fps;
+let frame;
+let posX = 0, posY = 0;
+let timePassed = 0;
+// https://spicyyoghurt.com/tutorials/html5-javascript-game-development/create-a-proper-game-loop-with-requestanimationframe
+// https://javascript.tutorialink.com/adding-a-number-to-number-results-in-nan-in-my-program-why/
+
 class Game {
     
     constructor(){
@@ -14,6 +23,12 @@ class Game {
         this.pipesSpace=canvas.width/2
         this.isGameOn=true
         this.score=0;
+        //this.oldTimeStamp=0
+        //this.secondsPassed=0
+        
+        //this.secondsPassed= +new Date() - (60*5);
+        //this.oldTimeStamp= +new Date() - (60*5)
+        //this.fps;
     }
 
     gameOverCollision = () => {
@@ -21,10 +36,6 @@ class Game {
         
         this.pipeArr.forEach((pipe) =>{
             this.pollo
-
-
-       
-
 
         if (this.pollo.x < pipe.x + pipe.w &&
             this.pollo.x + this.pollo.w > pipe.x &&
@@ -67,15 +78,27 @@ class Game {
 
     //todos los metodos que regulan nuestro juego, loop, colisiones, etc
 
-    gameLoop = () => {
+    gameLoop = (timeStamp) => {
         //console.log("juego andando")
-        
+        //console.log(timeStamp)
+            
+        // Calculate the number of seconds passed since the last frame
+        secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+        oldTimeStamp = timeStamp;
+        console.log("secoP:"+secondsPassed)
+
+
+        // Calculate fps
+        fps = Math.round(1 / secondsPassed);
+
         // 1. borrar el canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+
         
         // 2. acciones o movimiento de los elementos
         //metodo del pollito
-        this.pollo.gravityPollo();
+        this.pollo.gravityPollo(secondsPassed);
         //this.pipe.movePipe()
         this.addNewPipes();
         //check if pollito colides
@@ -84,7 +107,7 @@ class Game {
         scoreDOM.innerText=Math.floor(this.score)
 
         this.pipeArr.forEach((pipe) => {
-            pipe.movePipe()
+            pipe.movePipe(secondsPassed)
         })
         this.deletePipes()
 
@@ -98,6 +121,14 @@ class Game {
         
         //this.pipe.drawPipe()
         this.pipeArr.forEach(pipe => pipe.drawPipe())
+
+        
+        // Draw number to the screen
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, 200, 100);
+        ctx.font = '25px Arial';
+        ctx.fillStyle = 'black';
+        ctx.fillText("FPS: " + fps, 10, 30);
 
         // 4. control y recursion
         if(this.isGameOn) requestAnimationFrame(this.gameLoop)
